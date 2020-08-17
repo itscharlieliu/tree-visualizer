@@ -20,8 +20,6 @@ export default class Tree<T> {
     }
 
     set(key: number, value: T) {
-        console.log("setting value");
-
         if (this.root === null) {
             this.root = new TreeNode<T>(key, value);
             return;
@@ -29,8 +27,6 @@ export default class Tree<T> {
 
         let curr = this.root;
         while (curr !== null) {
-            // Debug: print path
-            console.log(curr);
             if (curr.key === key) {
                 // Key exists
                 curr.value = value;
@@ -52,11 +48,10 @@ export default class Tree<T> {
                 curr = curr.right;
             }
         }
-        throw new Error("Unknown error when setting value")
+        throw new Error("Unknown error when setting value");
     }
 
     get(key: number) {
-        console.log("getting value");
         let curr = this.root;
         while (curr !== null) {
             if (curr.key === key) {
@@ -72,4 +67,6 @@ export default class Tree<T> {
         }
         return undefined;
     }
+
+    delete(key: number) {}
 }
