@@ -8,17 +8,27 @@ interface TreeNode {
     right?: TreeNode;
 }
 
-const drawTree = (tree: Tree<number>, context: CanvasRenderingContext2D) => {
-    context.clearRect(0, 0, context.canvas.width, context.canvas.height);
-    context.fillStyle = "#000000";
-    context.beginPath();
-    context.arc(50, 100, 20, 0, 2 * Math.PI);
-    // context.fill();
-    context.stroke();
+const drawTree = (context: CanvasRenderingContext2D, root?: TreeNode, x?: number, y?: number) => {
+    if (!x) {
+        x = 0;
+    }
+    if (!y) {
+        y = 0;
+    }
+
+    if (root) {
+        context.beginPath();
+        context.arc(x, y, 20, 0, 2 * Math.PI);
+        // context.fill();
+        context.stroke();
+
+        drawTree(context, root.left, x - 20, y + 20);
+        drawTree(context, root.right, x + 20, y + 20);
+    }
 };
 
 const TreeDisplay = (): JSX.Element => {
-    const treeRef = useRef<Tree<number>>(new Tree<number>());
+    const rootRef = useRef<TreeNode | undefined>(undefined);
 
     const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -28,7 +38,11 @@ const TreeDisplay = (): JSX.Element => {
             const context = canvas.getContext("2d");
 
             if (context) {
-                drawTree(treeRef.current, context);
+                // Init frame
+                context.clearRect(0, 0, context.canvas.width, context.canvas.height);
+                context.fillStyle = "#000000";
+
+                drawTree(context, rootRef.current);
             }
         }
     };
@@ -40,8 +54,11 @@ const TreeDisplay = (): JSX.Element => {
     const handleAddNumber = () => {
         // temp random number
         const num = Math.floor(Math.random() * 10);
-
-        treeRef.current.set(num, num);
+        if (!rootRef.current) {
+            rootRef.current = { val: num };
+        } else {
+            rootRef.current.right = { val: num };
+        }
         renderCanvas();
     };
 
