@@ -37,6 +37,11 @@ const drawTree = (context: CanvasRenderingContext2D, root?: TreeNode, x?: number
         // context.fill();
         context.stroke();
 
+        context.font = "12px serif";
+        context.textAlign = "center";
+        context.textBaseline = "middle";
+        context.fillText(root.val.toString(), x, y);
+
         drawTree(context, root.left, x - 50, y + 100);
         drawTree(context, root.right, x + 50, y + 100);
     }
