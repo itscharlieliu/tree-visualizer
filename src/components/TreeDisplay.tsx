@@ -23,28 +23,22 @@ const addNode = (val: number, root?: TreeNode): TreeNode => {
     return root;
 };
 
-const drawTree = (context: CanvasRenderingContext2D, root?: TreeNode, x?: number, y?: number): void => {
-    if (!x) {
-        x = 0;
-    }
-    if (!y) {
-        y = 0;
-    }
+interface DisplayNode {
+    parent: DisplayNode | null;
+    value: number;
+}
 
+type DisplayRow = DisplayNode[];
+
+const drawTree = (displayRows: DisplayRow[], currRow: number, root?: TreeNode): DisplayRow[] => {
     if (root) {
-        context.beginPath();
-        context.arc(x, y, 20, 0, 2 * Math.PI);
-        // context.fill();
-        context.stroke();
 
-        context.font = "12px serif";
-        context.textAlign = "center";
-        context.textBaseline = "middle";
-        context.fillText(root.val.toString(), x, y);
+        displayRows[currRow].push({parent: })
 
         drawTree(context, root.left, x - 50, y + 100);
         drawTree(context, root.right, x + 50, y + 100);
     }
+    return displayRows;
 };
 
 const TreeDisplay = (): JSX.Element => {
@@ -63,6 +57,8 @@ const TreeDisplay = (): JSX.Element => {
                 // Init frame
                 context.clearRect(0, 0, context.canvas.width, context.canvas.height);
                 context.fillStyle = "#000000";
+
+                const rows: DisplayRow[] = [];
 
                 drawTree(context, rootRef.current, 400);
             }
