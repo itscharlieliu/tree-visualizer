@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useState } from "react";
 import styles from "./styles/TreeDisplay.module.css";
 
 interface TreeNode {
@@ -42,31 +42,6 @@ const TreeComponent = (props: TreeComponentProps): JSX.Element | null => {
 
 const TreeDisplay = (): JSX.Element => {
     const [root, setRoot] = useState<TreeNode | undefined>(undefined);
-
-    console.log(root);
-
-    // const canvasRef = useRef<HTMLCanvasElement>(null);
-
-    // const renderCanvas = () => {
-    //     if (canvasRef.current) {
-    //         const canvas = canvasRef.current;
-    //         canvas.height = 500;
-    //         canvas.width = 1000;
-    //         const context = canvas.getContext("2d");
-    //
-    //         if (context) {
-    //             // Init frame
-    //             context.clearRect(0, 0, context.canvas.width, context.canvas.height);
-    //             context.fillStyle = "#000000";
-    //
-    //             const rows: DisplayRow[] = [];
-    //         }
-    //     }
-    // };
-
-    // useMount(() => {
-    //     renderCanvas();
-    // });
 
     const handleAddNumber = () => {
         // temp random number
