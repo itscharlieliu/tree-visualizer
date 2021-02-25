@@ -1,6 +1,5 @@
-import React, { useRef } from "react";
-import useMount from "../utils/useMount";
-import Tree from "../data_structures/tree";
+import React, { useRef, useState } from "react";
+import styles from "./styles/TreeDisplay.module.css";
 
 interface TreeNode {
     val: number;
@@ -20,66 +19,66 @@ const addNode = (val: number, root?: TreeNode): TreeNode => {
         root.right = addNode(val, root.right);
     }
     // Otherwise, val already exists
-    return root;
+    return { ...root };
 };
 
-interface DisplayNode {
-    parent: DisplayNode | null;
-    value: number;
+interface TreeComponentProps {
+    treeNode?: TreeNode;
 }
 
-type DisplayRow = DisplayNode[];
-
-const drawTree = (displayRows: DisplayRow[], currRow: number, root?: TreeNode): DisplayRow[] => {
-    if (root) {
-
-        displayRows[currRow].push({parent: })
-
-        drawTree(context, root.left, x - 50, y + 100);
-        drawTree(context, root.right, x + 50, y + 100);
+const TreeComponent = (props: TreeComponentProps): JSX.Element | null => {
+    if (!props.treeNode) {
+        return null;
     }
-    return displayRows;
+
+    return (
+        <div className={styles.tree__branch}>
+            <span className={styles.tree__branchValue}>{props.treeNode.val}</span>
+            <TreeComponent treeNode={props.treeNode.left} />
+            <TreeComponent treeNode={props.treeNode.right} />
+        </div>
+    );
 };
 
 const TreeDisplay = (): JSX.Element => {
-    const rootRef = useRef<TreeNode | undefined>(undefined);
+    const [root, setRoot] = useState<TreeNode | undefined>(undefined);
 
-    const canvasRef = useRef<HTMLCanvasElement>(null);
+    console.log(root);
 
-    const renderCanvas = () => {
-        if (canvasRef.current) {
-            const canvas = canvasRef.current;
-            canvas.height = 500;
-            canvas.width = 1000;
-            const context = canvas.getContext("2d");
+    // const canvasRef = useRef<HTMLCanvasElement>(null);
 
-            if (context) {
-                // Init frame
-                context.clearRect(0, 0, context.canvas.width, context.canvas.height);
-                context.fillStyle = "#000000";
+    // const renderCanvas = () => {
+    //     if (canvasRef.current) {
+    //         const canvas = canvasRef.current;
+    //         canvas.height = 500;
+    //         canvas.width = 1000;
+    //         const context = canvas.getContext("2d");
+    //
+    //         if (context) {
+    //             // Init frame
+    //             context.clearRect(0, 0, context.canvas.width, context.canvas.height);
+    //             context.fillStyle = "#000000";
+    //
+    //             const rows: DisplayRow[] = [];
+    //         }
+    //     }
+    // };
 
-                const rows: DisplayRow[] = [];
-
-                drawTree(context, rootRef.current, 400);
-            }
-        }
-    };
-
-    useMount(() => {
-        renderCanvas();
-    });
+    // useMount(() => {
+    //     renderCanvas();
+    // });
 
     const handleAddNumber = () => {
         // temp random number
         const num = Math.floor(Math.random() * 100);
-        rootRef.current = addNode(num, rootRef.current);
-        renderCanvas();
+        setRoot(addNode(num, root));
+        // renderCanvas();
     };
 
     return (
         <div>
             <button onClick={handleAddNumber}>add random number</button>
-            <canvas ref={canvasRef}>This browser is not supported.</canvas>
+            <TreeComponent treeNode={root} />
         </div>
     );
 };

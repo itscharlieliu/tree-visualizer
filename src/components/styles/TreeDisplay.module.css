@@ -1,0 +1,14 @@
+.tree__branch {
+    display: grid;
+    grid-template-rows: 2em 1fr;
+    grid-template-columns: 1fr 1fr;
+
+    background-color: grey;
+    border: black 1px solid;
+}
+
+.tree__branchValue {
+    text-align: center;
+    grid-column-start: 1;
+    grid-column-end: 3;
+}
