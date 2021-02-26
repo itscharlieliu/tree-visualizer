@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { Ref, useRef, useState } from "react";
 import styles from "./styles/TreeDisplay.module.css";
 
 interface TreeNode {
@@ -26,19 +26,25 @@ interface TreeComponentProps {
     treeNode?: TreeNode;
 }
 
-const TreeComponent = (props: TreeComponentProps): JSX.Element | null => {
+const TreeComponent = React.forwardRef ((props: TreeComponentProps, ref: Ref<HTMLDivElement>): JSX.Element | null => {
+    const rootRef = useRef<HTMLDivElement>(null);
+    const leftRef = useRef<HTMLDivElement>(null);
+    const rightRef = useRef<HTMLDivElement>(null);
+
     if (!props.treeNode) {
         return null;
     }
 
     return (
-        <div className={styles.tree__branch}>
-            <span className={styles.tree__branchValue}>{props.treeNode.val}</span>
-            <TreeComponent treeNode={props.treeNode.left} />
-            <TreeComponent treeNode={props.treeNode.right} />
-        </div>
+            <div ref={rootRef} className={styles.tree__branch}>
+                <span className={styles.tree__branchValue}>{props.treeNode.val}</span>
+                <svg width="100" height="500"><line x1="50" y1="50" x2="350" y2="350" stroke="black"/></svg>
+
+                <TreeComponent ref={leftRef} treeNode={props.treeNode.left} />
+                <TreeComponent ref={rightRef} treeNode={props.treeNode.right} />
+            </div>
     );
-};
+});
 
 const TreeDisplay = (): JSX.Element => {
     const [root, setRoot] = useState<TreeNode | undefined>(undefined);

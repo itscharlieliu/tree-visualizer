@@ -1,6 +1,6 @@
 .tree__branch {
     display: grid;
-    grid-template-rows: 2em 1fr;
+    grid-template-rows: 2em 1fr 1fr;
     grid-template-columns: 1fr 1fr;
 
     background-color: grey;
