@@ -26,7 +26,7 @@ interface TreeComponentProps {
     treeNode?: TreeNode;
 }
 
-const TreeComponent = React.forwardRef ((props: TreeComponentProps, ref: Ref<HTMLDivElement>): JSX.Element | null => {
+const TreeComponent = React.forwardRef((props: TreeComponentProps, ref: Ref<HTMLDivElement>): JSX.Element | null => {
     const rootRef = useRef<HTMLDivElement>(null);
     const leftRef = useRef<HTMLDivElement>(null);
     const rightRef = useRef<HTMLDivElement>(null);
@@ -35,14 +35,24 @@ const TreeComponent = React.forwardRef ((props: TreeComponentProps, ref: Ref<HTM
         return null;
     }
 
-    return (
-            <div ref={rootRef} className={styles.tree__branch}>
-                <span className={styles.tree__branchValue}>{props.treeNode.val}</span>
-                <svg width="100" height="500"><line x1="50" y1="50" x2="350" y2="350" stroke="black"/></svg>
+    const width = rootRef.current ? rootRef.current.clientWidth : 0;
+    const height = rootRef.current ? rootRef.current.clientHeight : 0;
 
-                <TreeComponent ref={leftRef} treeNode={props.treeNode.left} />
-                <TreeComponent ref={rightRef} treeNode={props.treeNode.right} />
-            </div>
+    console.log(rootRef.current && rootRef.current.clientWidth);
+
+    return (
+        <div ref={rootRef} className={styles.tree__branch}>
+            <span className={styles.tree__branchValue}>{props.treeNode.val}</span>
+            <svg width={width} height={height}>
+                <line x1={width / 2} y1={50} x2="0" y2={height / 2} stroke="black" />
+            </svg>
+            <svg width="100" height="500">
+                <line x1="100" y1="50" x2="100" y2="350" stroke="black" />
+            </svg>
+
+            <TreeComponent ref={leftRef} treeNode={props.treeNode.left} />
+            <TreeComponent ref={rightRef} treeNode={props.treeNode.right} />
+        </div>
     );
 });
 
