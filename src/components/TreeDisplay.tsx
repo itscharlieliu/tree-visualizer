@@ -1,4 +1,4 @@
-import React, { Ref, useRef, useState } from "react";
+import React, { Ref, useEffect, useRef, useState } from "react";
 import styles from "./styles/TreeDisplay.module.css";
 
 interface TreeNode {
@@ -28,16 +28,21 @@ interface TreeComponentProps {
 }
 
 const TreeComponent = React.forwardRef((props: TreeComponentProps, ref: Ref<HTMLDivElement>): JSX.Element | null => {
+    const [width, setWidth] = useState(0);
+    const [height, setHeight] = useState(0);
+
     const rootRef = useRef<HTMLDivElement>(null);
     const leftRef = useRef<HTMLDivElement>(null);
     const rightRef = useRef<HTMLDivElement>(null);
 
+    useEffect(() => {
+        setWidth(rootRef.current ? rootRef.current.clientWidth : 0);
+        setHeight(rootRef.current ? rootRef.current.clientHeight : 0);
+    }, [rootRef.current]);
+
     if (!props.treeNode) {
         return null;
     }
-
-    let width = rootRef.current ? rootRef.current.clientWidth : 0;
-    let height = rootRef.current ? rootRef.current.clientHeight : 0;
 
     return (
         <div ref={rootRef} className={styles.tree__branch}>
@@ -47,22 +52,10 @@ const TreeComponent = React.forwardRef((props: TreeComponentProps, ref: Ref<HTML
             <TreeComponent ref={rightRef} treeNode={props.treeNode.right} />
 
             <svg className={styles.tree__connector} width={width} height={height}>
-                <line
-                    x1={(rootRef.current ? rootRef.current.clientWidth : 0) / 2}
-                    y1={rootRef.current ? rootRef.current.clientHeight : 0}
-                    x2="0"
-                    y2={(rootRef.current ? rootRef.current.clientHeight : 0) / 2}
-                    stroke="black"
-                />
+                <line x1={width / 2} y1={height} x2="0" y2={height / 2} stroke="black" />
             </svg>
             <svg className={styles.tree__connector} width={width} height={height}>
-                <line
-                    x1={(rootRef.current ? rootRef.current.clientWidth : 0) / 2}
-                    y1={rootRef.current ? rootRef.current.clientHeight : 0}
-                    x2={rootRef.current ? rootRef.current.clientWidth : 0}
-                    y2={(rootRef.current ? rootRef.current.clientHeight : 0) / 2}
-                    stroke="black"
-                />
+                <line x1={width / 2} y1={height} x2={width} y2={height / 2} stroke="black" />
             </svg>
         </div>
     );
