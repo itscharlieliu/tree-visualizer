@@ -28,28 +28,26 @@ interface TreeComponentProps {
 }
 
 const TreeComponent = React.forwardRef((props: TreeComponentProps, ref: Ref<HTMLDivElement>): JSX.Element | null => {
-    const [width, setWidth] = useState(0);
-    const [height, setHeight] = useState(0);
-
-    const rootRef = useRef<HTMLDivElement>(null);
-    const leftRef = useRef<HTMLDivElement>(null);
-    const rightRef = useRef<HTMLDivElement>(null);
-
-    useEffect(() => {
-        setWidth(rootRef.current ? rootRef.current.clientWidth : 0);
-        setHeight(rootRef.current ? rootRef.current.clientHeight : 0);
-    }, [rootRef.current]);
+    let width = 0;
+    let height = 0;
 
     if (!props.treeNode) {
         return null;
     }
 
+    const setRef = (ref: HTMLDivElement): void => {
+        width = ref ? ref.clientWidth : 0;
+        height = ref ? ref.clientHeight : 0;
+    };
+
     return (
-        <div ref={rootRef} className={styles.tree__branch}>
+        <div ref={setRef} className={styles.tree__branch}>
             <span className={styles.tree__branchValue}>{props.treeNode.val}</span>
 
-            <TreeComponent ref={leftRef} treeNode={props.treeNode.left} />
-            <TreeComponent ref={rightRef} treeNode={props.treeNode.right} />
+            <TreeComponent treeNode={props.treeNode.left} />
+            <TreeComponent treeNode={props.treeNode.right} />
+
+            {console.log(width)}
 
             <svg className={styles.tree__connector} width={width} height={height}>
                 <line x1={width / 2} y1={height} x2="0" y2={height / 2} stroke="black" />
