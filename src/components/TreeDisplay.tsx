@@ -1,4 +1,4 @@
-import React, { Ref, useEffect, useRef, useState } from "react";
+import React, { MutableRefObject, Ref, RefObject, useEffect, useRef, useState } from "react";
 import styles from "./styles/TreeDisplay.module.css";
 
 interface TreeNode {
@@ -22,57 +22,45 @@ const addNode = (val: number, root?: TreeNode): TreeNode => {
     return { ...root };
 };
 
+const renderCanvas = (canvasRef: RefObject<HTMLCanvasElement>) => {
+    if (!canvasRef.current) {
+        return;
+    }
+
+    const context = canvasRef.current.getContext("2d");
+
+    if (!context) {
+        console.warn("Unable to get context");
+        return;
+    }
+
+    context.moveTo(0, 0);
+    context.lineTo(200, 100);
+    context.stroke();
+};
+
 interface TreeComponentProps {
     treeNode?: TreeNode;
     parentRef?: Ref<HTMLDivElement>;
 }
 
-const TreeComponent = React.forwardRef((props: TreeComponentProps, ref: Ref<HTMLDivElement>): JSX.Element | null => {
-    let width = 0;
-    let height = 0;
-
-    if (!props.treeNode) {
-        return null;
-    }
-
-    const setRef = (ref: HTMLDivElement): void => {
-        width = ref ? ref.clientWidth : 0;
-        height = ref ? ref.clientHeight : 0;
-    };
-
-    return (
-        <div ref={setRef} className={styles.tree__branch}>
-            <span className={styles.tree__branchValue}>{props.treeNode.val}</span>
-
-            <TreeComponent treeNode={props.treeNode.left} />
-            <TreeComponent treeNode={props.treeNode.right} />
-
-            {console.log(width)}
-
-            <svg className={styles.tree__connector} width={width} height={height}>
-                <line x1={width / 2} y1={height} x2="0" y2={height / 2} stroke="black" />
-            </svg>
-            <svg className={styles.tree__connector} width={width} height={height}>
-                <line x1={width / 2} y1={height} x2={width} y2={height / 2} stroke="black" />
-            </svg>
-        </div>
-    );
-});
-
 const TreeDisplay = (): JSX.Element => {
-    const [root, setRoot] = useState<TreeNode | undefined>(undefined);
+    const canvasRef = useRef<HTMLCanvasElement>(null);
+
+    const root = useRef<TreeNode | undefined>(undefined);
 
     const handleAddNumber = () => {
         // temp random number
         const num = Math.floor(Math.random() * 100);
-        setRoot(addNode(num, root));
-        // renderCanvas();
+        root.current = addNode(num, root.current);
+
+        renderCanvas(canvasRef);
     };
 
     return (
         <div>
             <button onClick={handleAddNumber}>add random number</button>
-            <TreeComponent treeNode={root} />
+            <canvas ref={canvasRef} />
         </div>
     );
 };
