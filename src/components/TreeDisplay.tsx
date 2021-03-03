@@ -22,7 +22,7 @@ const addNode = (val: number, root?: TreeNode): TreeNode => {
     return { ...root };
 };
 
-const renderCanvas = (canvasRef: RefObject<HTMLCanvasElement>) => {
+const renderTree = (canvasRef: RefObject<HTMLCanvasElement>) => {
     if (!canvasRef.current) {
         return;
     }
@@ -37,6 +37,32 @@ const renderCanvas = (canvasRef: RefObject<HTMLCanvasElement>) => {
     context.moveTo(0, 0);
     context.lineTo(200, 100);
     context.stroke();
+};
+
+interface displayNode {
+    parentIdx?: number;
+    val: number;
+}
+
+type TreeRow = displayNode[];
+
+type TreeRows = TreeRow[];
+
+const populateRows = (root?: TreeNode, treeRows: TreeRows = [], depth: number = 0, parentIdx?: number): void => {
+    if (!root) {
+        return;
+    }
+
+    if (!treeRows[depth]) {
+        treeRows[depth] = [];
+    }
+
+    const currIdx = treeRows[depth].length;
+
+    treeRows[depth].push({ parentIdx, val: root.val });
+
+    populateRows(root.left, treeRows, depth + 1, currIdx);
+    populateRows(root.right, treeRows, depth + 1, currIdx);
 };
 
 interface TreeComponentProps {
@@ -54,7 +80,12 @@ const TreeDisplay = (): JSX.Element => {
         const num = Math.floor(Math.random() * 100);
         root.current = addNode(num, root.current);
 
-        renderCanvas(canvasRef);
+        const treeRows: TreeRows = [];
+
+        populateRows(root.current, treeRows);
+
+        console.log(treeRows);
+        renderTree(canvasRef);
     };
 
     return (
