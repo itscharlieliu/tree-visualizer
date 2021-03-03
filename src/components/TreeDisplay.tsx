@@ -22,7 +22,52 @@ const addNode = (val: number, root?: TreeNode): TreeNode => {
     return { ...root };
 };
 
-const renderTree = (canvasRef: RefObject<HTMLCanvasElement>) => {
+interface DisplayNode {
+    parentIdx?: number;
+    val: number;
+    xPos: number;
+}
+
+type TreeRow = DisplayNode[];
+
+type TreeRows = TreeRow[];
+
+const HORIZONTAL_GAP = 25;
+const VERTICAL_GAP = 25;
+
+// Returns x pos of added node
+const populateRows = (
+    root?: TreeNode,
+    treeRows: TreeRows = [],
+    depth: number = 0,
+    parentIdx?: number,
+    parentXPos?: number,
+): number => {
+    if (!root) {
+        return -1;
+    }
+
+    if (!treeRows[depth]) {
+        treeRows[depth] = [];
+    }
+
+    const currIdx = treeRows[depth].length;
+
+    const displayNode: DisplayNode = { parentIdx, val: root.val, xPos: parentXPos ? parentXPos : 0 };
+
+    const leftPos = populateRows(root.left, treeRows, depth + 1, currIdx);
+
+    if (leftPos !== -1) {
+        displayNode.xPos = leftPos + HORIZONTAL_GAP;
+    }
+
+    populateRows(root.right, treeRows, depth + 1, currIdx);
+
+    treeRows[depth].push(displayNode);
+    return displayNode.xPos;
+};
+
+const renderTree = (canvasRef: RefObject<HTMLCanvasElement>, treeRows: TreeRows) => {
     if (!canvasRef.current) {
         return;
     }
@@ -34,41 +79,22 @@ const renderTree = (canvasRef: RefObject<HTMLCanvasElement>) => {
         return;
     }
 
-    context.moveTo(0, 0);
-    context.lineTo(200, 100);
+    context.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
+
+    for (const treeRowIdx in treeRows) {
+        const treeRow = treeRows[treeRowIdx];
+        for (const displayNodeIdx in treeRow) {
+            const displayNode = treeRow[displayNodeIdx];
+
+            context.beginPath();
+            // @ts-ignore
+            context.arc(displayNode.xPos, treeRowIdx * VERTICAL_GAP, 5, 0, 260);
+            context.closePath();
+        }
+    }
+
     context.stroke();
 };
-
-interface displayNode {
-    parentIdx?: number;
-    val: number;
-}
-
-type TreeRow = displayNode[];
-
-type TreeRows = TreeRow[];
-
-const populateRows = (root?: TreeNode, treeRows: TreeRows = [], depth: number = 0, parentIdx?: number): void => {
-    if (!root) {
-        return;
-    }
-
-    if (!treeRows[depth]) {
-        treeRows[depth] = [];
-    }
-
-    const currIdx = treeRows[depth].length;
-
-    treeRows[depth].push({ parentIdx, val: root.val });
-
-    populateRows(root.left, treeRows, depth + 1, currIdx);
-    populateRows(root.right, treeRows, depth + 1, currIdx);
-};
-
-interface TreeComponentProps {
-    treeNode?: TreeNode;
-    parentRef?: Ref<HTMLDivElement>;
-}
 
 const TreeDisplay = (): JSX.Element => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -85,7 +111,7 @@ const TreeDisplay = (): JSX.Element => {
         populateRows(root.current, treeRows);
 
         console.log(treeRows);
-        renderTree(canvasRef);
+        renderTree(canvasRef, treeRows);
     };
 
     return (
