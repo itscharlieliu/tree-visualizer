@@ -53,7 +53,7 @@ const populateRows = (
 
     const currIdx = treeRows[depth].length;
 
-    const displayNode: DisplayNode = { parentIdx, val: root.val, xPos: parentXPos ? parentXPos : 0 };
+    const displayNode: DisplayNode = { parentIdx, val: root.val, xPos: parentXPos ? parentXPos : 100 };
 
     const leftPos = populateRows(root.left, treeRows, depth + 1, currIdx);
 
@@ -89,11 +89,11 @@ const renderTree = (canvasRef: RefObject<HTMLCanvasElement>, treeRows: TreeRows)
             context.beginPath();
             // @ts-ignore
             context.arc(displayNode.xPos, treeRowIdx * VERTICAL_GAP, 5, 0, 260);
+
             context.closePath();
+            context.stroke();
         }
     }
-
-    context.stroke();
 };
 
 const TreeDisplay = (): JSX.Element => {
