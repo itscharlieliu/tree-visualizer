@@ -34,6 +34,8 @@ type TreeRows = TreeRow[];
 
 const HORIZONTAL_GAP = 25;
 const VERTICAL_GAP = 25;
+const PADDING_TOP = 25;
+const PADDING_LEFT = 25;
 
 // Returns x pos of added node
 const populateRows = (
@@ -42,6 +44,7 @@ const populateRows = (
     depth: number = 0,
     parentIdx?: number,
     parentXPos?: number,
+    isRight?: boolean,
 ): number => {
     if (!root) {
         return -1;
@@ -53,17 +56,23 @@ const populateRows = (
 
     const currIdx = treeRows[depth].length;
 
-    const displayNode: DisplayNode = { parentIdx, val: root.val, xPos: parentXPos ? parentXPos : 100 };
+    const displayNode: DisplayNode = { parentIdx, val: root.val, xPos: parentXPos ? parentXPos : 0 };
 
-    const leftPos = populateRows(root.left, treeRows, depth + 1, currIdx);
+    if (isRight) {
+        displayNode.xPos = displayNode.xPos + HORIZONTAL_GAP;
+    }
+
+    const leftPos = populateRows(root.left, treeRows, depth + 1, currIdx, displayNode.xPos);
 
     if (leftPos !== -1) {
         displayNode.xPos = leftPos + HORIZONTAL_GAP;
     }
 
-    populateRows(root.right, treeRows, depth + 1, currIdx);
+    populateRows(root.right, treeRows, depth + 1, currIdx, displayNode.xPos, true);
 
     treeRows[depth].push(displayNode);
+
+    console.log(displayNode);
     return displayNode.xPos;
 };
 
@@ -79,19 +88,26 @@ const renderTree = (canvasRef: RefObject<HTMLCanvasElement>, treeRows: TreeRows)
         return;
     }
 
+    context.canvas.width = 1000;
+    context.canvas.height = 600;
+
     context.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
 
-    for (const treeRowIdx in treeRows) {
+    for (let treeRowIdx = 0; treeRowIdx < treeRows.length; treeRowIdx++) {
         const treeRow = treeRows[treeRowIdx];
         for (const displayNodeIdx in treeRow) {
             const displayNode = treeRow[displayNodeIdx];
 
+            const x = PADDING_LEFT + displayNode.xPos;
+            const y = PADDING_TOP + treeRowIdx * VERTICAL_GAP;
+
             context.beginPath();
-            // @ts-ignore
-            context.arc(displayNode.xPos, treeRowIdx * VERTICAL_GAP, 5, 0, 260);
+            context.arc(x, y, 5, 0, 260);
 
             context.closePath();
             context.stroke();
+
+            context.fillText(displayNode.val.toString(), x, y);
         }
     }
 };
