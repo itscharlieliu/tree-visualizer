@@ -75,7 +75,11 @@ const populateRows = (
         displayNode.xPos = leftPos + HORIZONTAL_GAP;
     }
 
-    populateRows(root.right, treeRows, depth + 1, currIdx, displayNode.xPos, true);
+    const rightPos = populateRows(root.right, treeRows, depth + 1, currIdx, displayNode.xPos, true);
+
+    if (leftPos !== -1 && rightPos !== -1) {
+        displayNode.xPos = (leftPos + rightPos) / 2;
+    }
 
     treeRows[depth].push(displayNode);
 
