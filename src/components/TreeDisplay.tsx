@@ -58,6 +58,13 @@ const populateRows = (
 
     const displayNode: DisplayNode = { parentIdx, val: root.val, xPos: parentXPos ? parentXPos : 0 };
 
+    const treeRow = treeRows[depth];
+
+    if (treeRow.length > 0 && treeRow[treeRow.length - 1].xPos + HORIZONTAL_GAP > displayNode.xPos) {
+        displayNode.xPos = treeRow[treeRow.length - 1].xPos + HORIZONTAL_GAP;
+        console.log("Got hgere");
+    }
+
     if (isRight) {
         displayNode.xPos = displayNode.xPos + HORIZONTAL_GAP;
     }
