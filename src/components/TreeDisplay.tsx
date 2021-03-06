@@ -72,7 +72,6 @@ const populateRows = (
 
     treeRows[depth].push(displayNode);
 
-    console.log(displayNode);
     return displayNode.xPos;
 };
 
@@ -88,9 +87,6 @@ const renderTree = (canvasRef: RefObject<HTMLCanvasElement>, treeRows: TreeRows)
         return;
     }
 
-    context.canvas.width = 1000;
-    context.canvas.height = 600;
-
     context.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
 
     for (let treeRowIdx = 0; treeRowIdx < treeRows.length; treeRowIdx++) {
@@ -101,13 +97,28 @@ const renderTree = (canvasRef: RefObject<HTMLCanvasElement>, treeRows: TreeRows)
             const x = PADDING_LEFT + displayNode.xPos;
             const y = PADDING_TOP + treeRowIdx * VERTICAL_GAP;
 
+            // Draw circle
             context.beginPath();
             context.arc(x, y, 5, 0, 260);
-
             context.closePath();
             context.stroke();
 
             context.fillText(displayNode.val.toString(), x, y);
+
+            // Draw Line to parent
+            const parentRow = treeRows[treeRowIdx - 1];
+
+            if (parentRow === undefined || displayNode.parentIdx === undefined) {
+                continue;
+            }
+            const parent = treeRows[treeRowIdx - 1][displayNode.parentIdx];
+            const parentX = PADDING_LEFT + parent.xPos;
+            const parentY = y - VERTICAL_GAP;
+            context.beginPath();
+            context.moveTo(x, y);
+            context.lineTo(parentX, parentY);
+            context.stroke();
+            context.closePath();
         }
     }
 };
@@ -126,14 +137,13 @@ const TreeDisplay = (): JSX.Element => {
 
         populateRows(root.current, treeRows);
 
-        console.log(treeRows);
         renderTree(canvasRef, treeRows);
     };
 
     return (
         <div>
             <button onClick={handleAddNumber}>add random number</button>
-            <canvas ref={canvasRef} />
+            <canvas ref={canvasRef} width={1000} height={600} />
         </div>
     );
 };
