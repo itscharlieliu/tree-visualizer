@@ -32,8 +32,9 @@ type TreeRow = DisplayNode[];
 
 type TreeRows = TreeRow[];
 
-const HORIZONTAL_GAP = 25;
-const VERTICAL_GAP = 25;
+const HORIZONTAL_GAP = 50;
+const VERTICAL_GAP = 50;
+const RADIUS = 20;
 const PADDING_TOP = 25;
 const PADDING_LEFT = 25;
 
@@ -110,7 +111,7 @@ const renderTree = (canvasRef: RefObject<HTMLCanvasElement>, treeRows: TreeRows)
 
             // Draw circle
             context.beginPath();
-            context.arc(x, y, 5, 0, 260);
+            context.arc(x, y, RADIUS, 0, 260);
             context.closePath();
             context.stroke();
 
@@ -126,8 +127,8 @@ const renderTree = (canvasRef: RefObject<HTMLCanvasElement>, treeRows: TreeRows)
             const parentX = PADDING_LEFT + parent.xPos;
             const parentY = y - VERTICAL_GAP;
             context.beginPath();
-            context.moveTo(x, y);
-            context.lineTo(parentX, parentY);
+            context.moveTo(x, y - RADIUS);
+            context.lineTo(parentX, parentY + RADIUS);
             context.stroke();
             context.closePath();
         }
