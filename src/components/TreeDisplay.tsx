@@ -127,8 +127,21 @@ const renderTree = (canvasRef: RefObject<HTMLCanvasElement>, treeRows: TreeRows)
             const parentX = PADDING_LEFT + parent.xPos;
             const parentY = y - VERTICAL_GAP;
             context.beginPath();
-            context.moveTo(x, y - RADIUS);
-            context.lineTo(parentX, parentY + RADIUS);
+            const pointOnCircle = RADIUS * (Math.sqrt(2) / 2);
+            if (parentX < x) {
+                // Will look like \
+                context.moveTo(x - pointOnCircle, y - pointOnCircle);
+                context.lineTo(parentX + pointOnCircle, parentY + pointOnCircle);
+            } else if (parentX > x) {
+                // Will look like /
+                context.moveTo(x + pointOnCircle, y - pointOnCircle);
+                context.lineTo(parentX - pointOnCircle, parentY + pointOnCircle);
+            } else {
+                // vertical line
+                context.moveTo(x, y - RADIUS);
+                context.lineTo(parentX, parentY + RADIUS);
+            }
+
             context.stroke();
             context.closePath();
         }
