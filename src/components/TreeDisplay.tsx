@@ -63,7 +63,6 @@ const populateRows = (
 
     if (treeRow.length > 0 && treeRow[treeRow.length - 1].xPos + HORIZONTAL_GAP > displayNode.xPos) {
         displayNode.xPos = treeRow[treeRow.length - 1].xPos + HORIZONTAL_GAP;
-        console.log("Got hgere");
     }
 
     if (isRight) {
@@ -78,6 +77,9 @@ const populateRows = (
 
     const rightPos = populateRows(root.right, treeRows, depth + 1, currIdx, displayNode.xPos, true);
 
+    if (rightPos !== -1) {
+        displayNode.xPos = rightPos - HORIZONTAL_GAP;
+    }
     if (leftPos !== -1 && rightPos !== -1) {
         displayNode.xPos = (leftPos + rightPos) / 2;
     }
