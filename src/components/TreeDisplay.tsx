@@ -35,8 +35,8 @@ type TreeRows = TreeRow[];
 const HORIZONTAL_GAP = 50;
 const VERTICAL_GAP = 50;
 const RADIUS = 20;
-const PADDING_TOP = 25;
-const PADDING_LEFT = 25;
+const PADDING_VERTICAL = 25;
+const PADDING_HORIZONTAL = 25;
 
 // Returns x pos of added node
 const populateRows = (
@@ -103,13 +103,32 @@ const renderTree = (canvasRef: RefObject<HTMLCanvasElement>, treeRows: TreeRows)
 
     context.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
 
+    let width = context.canvas.width;
+    let height = context.canvas.height;
+
+    for (let treeRowIdx = 0; treeRowIdx < treeRows.length; ++treeRowIdx) {
+        for (const treeNode of treeRows[treeRowIdx]) {
+            if (treeNode.xPos + PADDING_HORIZONTAL * 3 > width) {
+                width = treeNode.xPos + PADDING_HORIZONTAL * 3;
+            }
+        }
+        if (treeRowIdx * VERTICAL_GAP + PADDING_VERTICAL > height - PADDING_VERTICAL) {
+            height = treeRowIdx * VERTICAL_GAP + PADDING_VERTICAL * 3;
+        }
+    }
+
+    console.log(width, height);
+
+    context.canvas.width = width;
+    context.canvas.height = height;
+
     for (let treeRowIdx = 0; treeRowIdx < treeRows.length; treeRowIdx++) {
         const treeRow = treeRows[treeRowIdx];
         for (const displayNodeIdx in treeRow) {
             const displayNode = treeRow[displayNodeIdx];
 
-            const x = PADDING_LEFT + displayNode.xPos;
-            const y = PADDING_TOP + treeRowIdx * VERTICAL_GAP;
+            const x = PADDING_HORIZONTAL + displayNode.xPos;
+            const y = PADDING_VERTICAL + treeRowIdx * VERTICAL_GAP;
 
             // Draw circle
             context.beginPath();
@@ -126,7 +145,7 @@ const renderTree = (canvasRef: RefObject<HTMLCanvasElement>, treeRows: TreeRows)
                 continue;
             }
             const parent = treeRows[treeRowIdx - 1][displayNode.parentIdx];
-            const parentX = PADDING_LEFT + parent.xPos;
+            const parentX = PADDING_HORIZONTAL + parent.xPos;
             const parentY = y - VERTICAL_GAP;
             context.beginPath();
             const pointOnCircle = RADIUS * (Math.sqrt(2) / 2);
@@ -168,9 +187,9 @@ const TreeDisplay = (): JSX.Element => {
     };
 
     return (
-        <div>
+        <div className={styles.treeDisplay__container}>
             <button onClick={handleAddNumber}>add random number</button>
-            <canvas ref={canvasRef} width={1000} height={600} />
+            <canvas ref={canvasRef} width={200} height={200} />
         </div>
     );
 };
