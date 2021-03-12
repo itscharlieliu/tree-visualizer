@@ -1,4 +1,4 @@
-import React, { MutableRefObject, Ref, RefObject, useEffect, useRef, useState } from "react";
+import React, { RefObject, useRef, useState } from "react";
 import styles from "./styles/TreeDisplay.module.css";
 
 interface TreeNode {
@@ -170,13 +170,20 @@ const renderTree = (canvasRef: RefObject<HTMLCanvasElement>, treeRows: TreeRows)
 };
 
 const TreeDisplay = (): JSX.Element => {
+    const [inputValue, setInputValue] = useState<string>("");
+
     const canvasRef = useRef<HTMLCanvasElement>(null);
 
     const root = useRef<TreeNode | undefined>(undefined);
 
     const handleAddNumber = () => {
         // temp random number
-        const num = Math.floor(Math.random() * 100);
+        const num = parseInt(inputValue);
+
+        if (isNaN(num)) {
+            return;
+        }
+
         root.current = addNode(num, root.current);
 
         const treeRows: TreeRows = [];
@@ -188,6 +195,7 @@ const TreeDisplay = (): JSX.Element => {
 
     return (
         <div className={styles.treeDisplay__container}>
+            <input value={inputValue} onChange={(event) => setInputValue(event.target.value)} />
             <button onClick={handleAddNumber}>add random number</button>
             <canvas ref={canvasRef} width={200} height={200} />
         </div>

@@ -19,5 +19,6 @@
 
 .treeDisplay__container {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
+    width: min-content;
 }
